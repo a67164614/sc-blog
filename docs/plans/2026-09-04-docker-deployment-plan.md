@@ -78,7 +78,7 @@ Expected: all required deployment instructions are present.
 
 **Step 1: Start the service**
 
-Run: `FIREFFLY_PORT=8080 docker compose up --build -d`
+Run: `FIREFLY_PORT=8080 docker compose up --build -d`
 
 Expected: Compose reports a running `firefly` service.
 
@@ -90,7 +90,7 @@ Expected: HTTP 200 for the home page; static assets include immutable caching.
 
 **Step 3: Stop the verification service**
 
-Run: `FIREFFLY_PORT=8080 docker compose down`
+Run: `FIREFLY_PORT=8080 docker compose down`
 
 Expected: service and temporary network are removed.
 

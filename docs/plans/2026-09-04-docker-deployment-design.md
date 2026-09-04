@@ -15,7 +15,7 @@ and `NO_PROXY` build arguments so dependency and font downloads can use the
 server proxy. An Nginx Alpine runtime image serves only the generated static
 files.
 
-`docker-compose.yml` exposes Nginx on `${FIREFFLY_PORT:-80}` and restarts the
+`docker-compose.yml` exposes Nginx on `${FIREFLY_PORT:-80}` and restarts the
 container unless it is explicitly stopped. The project keeps all site content
 and `generateOgImages` settings unchanged.
 
