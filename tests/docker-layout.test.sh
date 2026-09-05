@@ -12,6 +12,10 @@ for file in Dockerfile .dockerignore nginx.conf docker-compose.yml; do
 done
 
 grep -q '^FROM node:24-alpine AS builder$' Dockerfile
+if grep -q '^# syntax=' Dockerfile; then
+	echo 'Dockerfile must not require a remote syntax frontend' >&2
+	exit 1
+fi
 grep -q '^FROM nginx:.*-alpine AS runtime$' Dockerfile
 grep -q '^ARG HTTP_PROXY$' Dockerfile
 grep -q '^ARG HTTPS_PROXY$' Dockerfile

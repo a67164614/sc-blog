@@ -158,10 +158,14 @@ Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生�
 git clone https://github.com/a67164614/sc-blog.git firefly
 cd firefly
 
-# 仅在服务器通过代理访问外网时设置
-export HTTP_PROXY=http://127.0.0.1:7890
-export HTTPS_PROXY=$HTTP_PROXY
-export NO_PROXY=localhost,127.0.0.1
+# 如果确认服务器的 7890 端口有代理服务监听，再取消下面三行的注释
+# 127.0.0.1 指服务器自身，不是你的本地电脑
+# export HTTP_PROXY=http://127.0.0.1:7890
+# export HTTPS_PROXY=$HTTP_PROXY
+# export NO_PROXY=localhost,127.0.0.1
+
+# 如果之前设置过但代理未启动，先清除代理环境变量
+# unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY all_proxy
 
 # 默认监听服务器的 80 端口；非 root 用户可使用 8080
 # export FIREFLY_PORT=8080
