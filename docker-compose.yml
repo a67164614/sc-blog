@@ -11,5 +11,5 @@ services:
         DISABLE_REMOTE_FONTS: ${DISABLE_REMOTE_FONTS:-1}
         DISABLE_OG_IMAGES: ${DISABLE_OG_IMAGES:-1}
     ports:
-      - "${FIREFLY_PORT:-80}:80"
+      - "${FIREFLY_PORT:-36055}:80"
     restart: unless-stopped

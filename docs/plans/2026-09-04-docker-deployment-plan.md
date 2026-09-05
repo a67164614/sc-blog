@@ -78,19 +78,19 @@ Expected: all required deployment instructions are present.
 
 **Step 1: Start the service**
 
-Run: `FIREFLY_PORT=8080 docker compose up --build -d`
+Run: `FIREFLY_PORT=36055 docker compose up --build -d`
 
 Expected: Compose reports a running `firefly` service.
 
 **Step 2: Request the page and cache header**
 
-Run: `curl -fsSI http://localhost:8080/` and `curl -fsSI http://localhost:8080/_astro/`
+Run: `curl -fsSI http://localhost:36055/` and `curl -fsSI http://localhost:36055/_astro/`
 
 Expected: HTTP 200 for the home page; static assets include immutable caching.
 
 **Step 3: Stop the verification service**
 
-Run: `FIREFLY_PORT=8080 docker compose down`
+Run: `FIREFLY_PORT=36055 docker compose down`
 
 Expected: service and temporary network are removed.
 

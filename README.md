@@ -192,7 +192,7 @@ cd firefly
 # 如果之前设置过但代理未启动，先清除代理环境变量
 # unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY all_proxy
 
-# 默认监听服务器的 80 端口；非 root 用户可使用 8080
+# 默认监听服务器的 36055 端口；需要其他端口时覆盖 FIREFLY_PORT
 # export FIREFLY_PORT=8080
 docker compose up -d --build
 ```

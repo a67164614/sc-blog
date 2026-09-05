@@ -30,5 +30,5 @@ grep -q '^ENV DISABLE_OG_IMAGES=\${DISABLE_OG_IMAGES}$' Dockerfile
 grep -q '^RUN pnpm install --frozen-lockfile --registry=https://registry.npmmirror.com$' Dockerfile
 grep -q '^COPY --from=builder /app/dist /usr/share/nginx/html$' Dockerfile
 grep -q 'dockerfile: Dockerfile' docker-compose.yml
-grep -q 'FIREFLY_PORT:-80' docker-compose.yml
+grep -q 'FIREFLY_PORT:-36055' docker-compose.yml
 grep -q 'Cache-Control "public, max-age=31536000, immutable"' nginx.conf
