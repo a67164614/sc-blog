@@ -23,6 +23,8 @@
  */
 import type { FontDefinition, FontSelectionConfig } from "@/types/fontConfig";
 
+const disableRemoteFonts = process.env.DISABLE_REMOTE_FONTS === "1";
+
 // ─── Astro Font API 字体定义 ───────────────────────────────
 // 适用于 Astro Font API 的字体配置，支持自动下载、缓存和优化加载
 // 本地开发调试的情况下，修改后需要每次重启开发服务器才能生效
@@ -86,7 +88,7 @@ export const fontsList: FontDefinition[] = [
 // ─── 字体选择与区域覆盖 ─────────────────────────────────────
 export const fontConfig: FontSelectionConfig = {
 	// 是否启用自定义字体功能
-	enable: true,
+	enable: !disableRemoteFonts,
 	// 当前选择的字体 CSS 变量名（对应上方 fonts 中的 cssVariable）
 	// 使用 "system" 表示系统字体（不加载任何自定义字体）
 	selected: ["system"],

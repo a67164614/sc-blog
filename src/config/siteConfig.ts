@@ -5,6 +5,7 @@ import { resolveSiteLang } from "../utils/site-config-utils";
 // 定义站点语言
 // 语言代码，例如：'zh_CN', 'zh_TW', 'en', 'ja', 'ru', 'ko'。
 const SITE_LANG = resolveSiteLang("zh_CN");
+const disableOgImages = process.env.DISABLE_OG_IMAGES === "1";
 
 // 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
 const pages = resolvePageToggles({
@@ -243,7 +244,7 @@ export const siteConfig: SiteConfig = {
 		// 是否显示随机文章推荐
 		randomPosts: true,
 		// OpenGraph图片功能，注意开启后要渲染很长时间，不建议本地调试的时候开启
-		generateOgImages: true,
+		generateOgImages: !disableOgImages,
 		// 沉浸阅读配置：电脑端文章详情页右下角按钮，进入后只留文章卡片+左侧目录
 		immersiveReading: {
 			// 总开关：false 则不显示按钮

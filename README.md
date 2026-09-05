@@ -150,7 +150,17 @@
 
 ### Docker 部署
 
-Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生成的静态文件。pnpm/ npm 默认使用国内镜像 `registry.npmmirror.com`，OG 图片生成仍然开启；若构建阶段访问 Google Fonts 失败，再配置服务器代理。
+Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生成的静态文件。pnpm/npm 默认使用国内镜像 `registry.npmmirror.com`。Docker 默认关闭 Astro 远程字体和 OG 图片预生成，因此构建不依赖 jsDelivr 或 Google Fonts；页面会使用系统字体，文章仍可正常访问。
+
+如果服务器有可用代理并且需要远程字体与 OG 图片，构建前设置：
+
+```bash
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=$HTTP_PROXY
+export NO_PROXY=localhost,127.0.0.1
+export DISABLE_REMOTE_FONTS=0
+export DISABLE_OG_IMAGES=0
+```
 
 如果构建日志出现 `error (23)`，先检查服务器磁盘空间和 inode；该错误通常表示下载文件无法写入：
 
