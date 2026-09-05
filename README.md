@@ -150,7 +150,7 @@
 
 ### Docker 部署
 
-Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生成的静态文件。构建会保留默认的 OG 图片生成；若该阶段需要访问 Google Fonts，请在构建前设置服务器代理。
+Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生成的静态文件。pnpm/ npm 默认使用国内镜像 `registry.npmmirror.com`，OG 图片生成仍然开启；若构建阶段访问 Google Fonts 失败，再配置服务器代理。
 
 首次部署：
 
