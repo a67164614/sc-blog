@@ -152,6 +152,21 @@
 
 Docker 镜像会在构建阶段运行 `pnpm build`，然后用 Nginx 托管生成的静态文件。pnpm/ npm 默认使用国内镜像 `registry.npmmirror.com`，OG 图片生成仍然开启；若构建阶段访问 Google Fonts 失败，再配置服务器代理。
 
+如果构建日志出现 `error (23)`，先检查服务器磁盘空间和 inode；该错误通常表示下载文件无法写入：
+
+```bash
+df -h /
+df -i /
+docker system df
+```
+
+确认空间充足后再重试构建：
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
 首次部署：
 
 ```bash

@@ -23,6 +23,7 @@ grep -q '^ARG NO_PROXY$' Dockerfile
 grep -q '^ENV NODE_USE_ENV_PROXY=1$' Dockerfile
 grep -q '^ENV COREPACK_NPM_REGISTRY=https://registry.npmmirror.com$' Dockerfile
 grep -q '^ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com$' Dockerfile
+grep -q '^RUN pnpm install --frozen-lockfile --registry=https://registry.npmmirror.com$' Dockerfile
 grep -q '^COPY --from=builder /app/dist /usr/share/nginx/html$' Dockerfile
 grep -q 'dockerfile: Dockerfile' docker-compose.yml
 grep -q 'FIREFLY_PORT:-80' docker-compose.yml
