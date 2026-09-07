@@ -1,0 +1,57 @@
+services:
+  firefly:
+    depends_on:
+      directus:
+        condition: service_healthy
+
+  cms-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${CMS_DB_NAME:-firefly_cms}
+      POSTGRES_USER: ${CMS_DB_USER:-firefly}
+      POSTGRES_PASSWORD: ${CMS_DB_PASSWORD:?set CMS_DB_PASSWORD}
+      POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+    volumes:
+      - cms-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  directus:
+    image: directus/directus:11.14.0
+    depends_on:
+      cms-db:
+        condition: service_healthy
+    environment:
+      KEY: ${DIRECTUS_KEY:?set DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET:?set DIRECTUS_SECRET}
+      PUBLIC_URL: ${CMS_PUBLIC_URL:?set CMS_PUBLIC_URL}
+      DB_CLIENT: pg
+      DB_HOST: cms-db
+      DB_PORT: 5432
+      DB_DATABASE: ${CMS_DB_NAME:-firefly_cms}
+      DB_USER: ${CMS_DB_USER:-firefly}
+      DB_PASSWORD: ${CMS_DB_PASSWORD:?set CMS_DB_PASSWORD}
+      ADMIN_EMAIL: ${CMS_ADMIN_EMAIL:?set CMS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${CMS_ADMIN_PASSWORD:?set CMS_ADMIN_PASSWORD}
+    volumes:
+      - cms-uploads:/directus/uploads
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:8055/server/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  cms-db-data:
+  cms-uploads:

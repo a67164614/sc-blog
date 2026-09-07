@@ -3,8 +3,9 @@
 set -euo pipefail
 
 ruby -e "require 'yaml'; YAML.load_file('docker-compose.yml')"
+ruby -e "require 'yaml'; YAML.load_file('docker-compose.cms.yml')"
 
-for file in Dockerfile .dockerignore nginx.conf docker-compose.yml; do
+for file in Dockerfile .dockerignore nginx.conf docker-compose.yml docker-compose.cms.yml .env.example; do
 	[[ -f "$file" ]] || {
 		echo "missing required Docker file: $file" >&2
 		exit 1

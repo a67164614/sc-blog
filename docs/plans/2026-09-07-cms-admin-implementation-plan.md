@@ -68,7 +68,7 @@ Commit: `git commit -am "feat: set personal blog defaults"`
 
 **Step 1: Write failing Compose tests**
 
-Parse Compose YAML and require `firefly`, `cms-db`, `directus`, and `publisher` services; named `cms-db-data` and `cms-uploads` volumes; health checks; no host port on Directus/PostgreSQL/publisher; and Nginx as the only public entry point. Assert `/admin/` proxies to `directus:8055` and static `location /` fallback remains present.
+Parse Compose YAML and require `firefly`, `cms-db`, and `directus` services; named `cms-db-data` and `cms-uploads` volumes; health checks; no host port on Directus/PostgreSQL; and Nginx as the only public entry point. Assert `/admin/` proxies to `directus:8055` and static `location /` fallback remains present. The publisher service is added in Task 4 after its package and Dockerfile exist.
 
 **Step 2: Verify it fails**
 
