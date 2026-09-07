@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "description": "Firefly CMS schema manifest. JSON is valid YAML 1.2 and keeps bootstrap parsing dependency-free.",
+  "collections": [
+    {"name":"cms_posts","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"title","type":"string","required":true},{"name":"slug","type":"string","required":true,"unique":true},{"name":"content_markdown","type":"text","required":true},{"name":"summary","type":"text"},{"name":"status","type":"string","required":true,"default":"draft","choices":["draft","pending_review","published","archived"]},{"name":"published_at","type":"dateTime"},{"name":"category","type":"string"},{"name":"tags","type":"json","default":[]},{"name":"cover_url","type":"string"},{"name":"source","type":"string"},{"name":"external_id","type":"string"},{"name":"source_external_key","type":"string","unique":true},{"name":"source_url","type":"string"},{"name":"sync_hash","type":"string"},{"name":"export_sha","type":"string"},{"name":"is_pinned","type":"boolean","default":false},{"name":"password","type":"string","hidden":true},{"name":"series","type":"json"}
+    ]},
+    {"name":"cms_tags","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"name","type":"string","required":true,"unique":true},{"name":"slug","type":"string","required":true,"unique":true}
+    ]},
+    {"name":"cms_categories","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"name","type":"string","required":true,"unique":true},{"name":"slug","type":"string","required":true,"unique":true},{"name":"description","type":"text"}
+    ]},
+    {"name":"cms_site_settings","singleton":true,"fields":[
+      {"name":"id","type":"integer","primary":true},{"name":"identity","type":"json","required":true},{"name":"appearance","type":"json","required":true},{"name":"navigation","type":"json","required":true},{"name":"layout","type":"json","required":true},{"name":"background","type":"json","required":true},{"name":"music","type":"json","required":true},{"name":"comments","type":"json","required":true},{"name":"features","type":"json","required":true},{"name":"social","type":"json","required":true}
+    ]},
+    {"name":"cms_media","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"filename","type":"string","required":true},{"name":"storage_path","type":"string","required":true,"unique":true},{"name":"mime_type","type":"string"},{"name":"size_bytes","type":"integer"},{"name":"width","type":"integer"},{"name":"height","type":"integer"},{"name":"source","type":"string"},{"name":"source_url","type":"string"}
+    ]},
+    {"name":"cms_integrations","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"source","type":"string","required":true,"unique":true},{"name":"enabled","type":"boolean","default":true},{"name":"token_hash","type":"string","required":true,"hidden":true},{"name":"token_prefix","type":"string"},{"name":"publication_policy","type":"string","required":true,"default":"review","choices":["immediate","review"]},{"name":"rotated_at","type":"dateTime"}
+    ]},
+    {"name":"cms_sync_events","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"source","type":"string","required":true},{"name":"external_id","type":"string"},{"name":"event_type","type":"string","required":true},{"name":"outcome","type":"string","required":true},{"name":"request_hash","type":"string"},{"name":"error_message","type":"text"},{"name":"created_at","type":"dateTime","required":true}
+    ]},
+    {"name":"cms_deployments","singleton":false,"fields":[
+      {"name":"id","type":"uuid","primary":true},{"name":"status","type":"string","required":true,"choices":["queued","exporting","pushed","building","succeeded","failed"]},{"name":"commit_sha","type":"string"},{"name":"error_message","type":"text"},{"name":"started_at","type":"dateTime"},{"name":"finished_at","type":"dateTime"}
+    ]}
+  ],
+  "permissions": {"public": [], "administrator": ["read", "create", "update", "delete"]}
+}

@@ -1,5 +1,6 @@
 packages:
   - '.'
+  - 'services/publisher'
 allowBuilds:
   esbuild: true
   workerd: true

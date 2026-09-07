@@ -52,6 +52,45 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  publisher:
+    build:
+      context: .
+      dockerfile: services/publisher/Dockerfile
+    depends_on:
+      cms-bootstrap:
+        condition: service_completed_successfully
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_SERVICE_TOKEN: ${DIRECTUS_SERVICE_TOKEN:?set DIRECTUS_SERVICE_TOKEN}
+      PUBLISHER_INTERNAL_TOKEN: ${PUBLISHER_INTERNAL_TOKEN:?set PUBLISHER_INTERNAL_TOKEN}
+      CONTENT_REPOSITORY: ${CONTENT_REPOSITORY:?set CONTENT_REPOSITORY}
+      GIT_AUTHOR_NAME: ${GIT_AUTHOR_NAME:-Sc Blog CMS}
+      GIT_AUTHOR_EMAIL: ${GIT_AUTHOR_EMAIL:?set GIT_AUTHOR_EMAIL}
+      PUBLISHER_PORT: 8787
+    expose:
+      - "8787"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8787/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  cms-bootstrap:
+    image: node:24-alpine
+    depends_on:
+      directus:
+        condition: service_healthy
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      CMS_ADMIN_EMAIL: ${CMS_ADMIN_EMAIL:?set CMS_ADMIN_EMAIL}
+      CMS_ADMIN_PASSWORD: ${CMS_ADMIN_PASSWORD:?set CMS_ADMIN_PASSWORD}
+    volumes:
+      - ./cms:/cms:ro
+    command: ["node", "/cms/bootstrap.mjs"]
+    restart: "no"
+
 volumes:
   cms-db-data:
   cms-uploads:
