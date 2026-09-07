@@ -58,6 +58,13 @@ export function fieldPayload(collectionName, field) {
   };
 }
 
+export function siteSettingsRequest(settings) {
+  return {
+    path: "/items/cms_site_settings",
+    options: { method: "PATCH", body: JSON.stringify(settings) },
+  };
+}
+
 async function login() {
   const result = await request("/auth/login", {
     method: "POST",
@@ -86,17 +93,8 @@ export async function bootstrap() {
   for (const collection of schema.collections) await ensureCollection(collection, token);
 
   const settings = JSON.parse(await readFile(new URL("./seed/site-settings.json", import.meta.url), "utf8"));
-  let settingsExist = false;
-  try {
-    await request(`/items/cms_site_settings/${settings.id}`, {}, token);
-    settingsExist = true;
-  } catch (error) {
-    if (error.status !== 404) throw error;
-  }
-  await request(`/items/cms_site_settings${settingsExist ? `/${settings.id}` : ""}`, {
-    method: settingsExist ? "PATCH" : "POST",
-    body: JSON.stringify(settings),
-  }, token);
+  const settingsRequest = siteSettingsRequest(settings);
+  await request(settingsRequest.path, settingsRequest.options, token);
   return schema.collections.length;
 }
 
