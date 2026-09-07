@@ -5,12 +5,15 @@ import { registerArticleRoute } from "./integrations/article-route.js";
 import { DirectusArticleStore, type ArticleStore } from "./integrations/store.js";
 import { GitHubContentsClient } from "./export/github.js";
 import { GitHubPublicationQueue, NoopPublicationQueue, type PublicationQueue } from "./publish/queue.js";
+import { registerSettingsRoute } from "./routes/settings-route.js";
+import type { GitHubFileClient } from "./export/github.js";
 
-export function createServer(config: PublisherConfig, store: ArticleStore = new DirectusArticleStore(config), queue: PublicationQueue = new NoopPublicationQueue()): FastifyInstance {
+export function createServer(config: PublisherConfig, store: ArticleStore = new DirectusArticleStore(config), queue: PublicationQueue = new NoopPublicationQueue(), settingsClient: GitHubFileClient = new GitHubContentsClient(config)): FastifyInstance {
   const app = Fastify({ logger: true });
 
   app.get("/healthz", async () => ({ status: "ok" }));
   registerArticleRoute(app, store, queue);
+  registerSettingsRoute(app, config.PUBLISHER_INTERNAL_TOKEN, settingsClient);
 
   return app;
 }

@@ -1,6 +1,7 @@
 import type { SiteConfig } from "@/types/siteConfig";
 import { resolvePageToggles } from "../utils/page-toggle-utils";
 import { resolveSiteLang } from "../utils/site-config-utils";
+import { applyCmsSiteOverrides } from "./cms-overrides";
 
 // 定义站点语言
 // 语言代码，例如：'zh_CN', 'zh_TW', 'en', 'ja', 'ru', 'ko'。
@@ -39,7 +40,7 @@ const pages = resolvePageToggles({
 	sponsor: true,
 });
 
-export const siteConfig: SiteConfig = {
+const defaultSiteConfig: SiteConfig = {
 	// 站点标题
 	title: "Sc 的个人博客",
 
@@ -47,7 +48,7 @@ export const siteConfig: SiteConfig = {
 	subtitle: "",
 
 	// 站点 URL
-	site_url: "https://firefly.cuteleaf.cn",
+	site_url: "https://blog.ycocc.com",
 
 	// 站点描述
 	description:
@@ -354,3 +355,5 @@ export const siteConfig: SiteConfig = {
 	// 页面开关配置，在本配置文件顶部pages定义
 	pages,
 };
+
+export const siteConfig: SiteConfig = applyCmsSiteOverrides(defaultSiteConfig);

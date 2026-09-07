@@ -1,6 +1,6 @@
 {
   "id": 1,
-  "identity": {"title": "Sc 的个人博客", "subtitle": "", "description": "Sc 的个人博客", "favicon": "", "logoLight": "", "logoDark": ""},
+  "identity": {"title": "Sc 的个人博客", "subtitle": "", "description": "Sc 的个人博客", "siteUrl": "https://blog.ycocc.com", "favicon": "", "logoLight": "", "logoDark": ""},
   "appearance": {"themeColor": "#2f8f5b", "colorMode": "system", "fontFamily": ""},
   "navigation": {"items": [], "showSearch": true},
   "layout": {"contentWidth": "normal", "showSidebar": true, "showFooter": true},
