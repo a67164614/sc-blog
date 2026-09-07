@@ -7,7 +7,7 @@ RUN corepack enable && pnpm install --frozen-lockfile --filter @sc-blog/publishe
 COPY services/publisher/tsconfig.json services/publisher/tsconfig.json
 COPY services/publisher/src services/publisher/src
 RUN pnpm --filter @sc-blog/publisher type-check
-RUN pnpm --filter @sc-blog/publisher deploy --prod /publisher
+RUN pnpm --filter @sc-blog/publisher deploy --prod --legacy /publisher
 
 FROM node:24-alpine
 WORKDIR /app
