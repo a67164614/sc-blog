@@ -52,6 +52,24 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  cms-admin-access:
+    image: postgres:17-alpine
+    depends_on:
+      directus:
+        condition: service_healthy
+    environment:
+      PGHOST: cms-db
+      PGPORT: 5432
+      PGDATABASE: ${CMS_DB_NAME:-firefly_cms}
+      PGUSER: ${CMS_DB_USER:-firefly}
+      PGPASSWORD: ${CMS_DB_PASSWORD:?set CMS_DB_PASSWORD}
+      CMS_ADMIN_EMAIL: ${CMS_ADMIN_EMAIL:?set CMS_ADMIN_EMAIL}
+    volumes:
+      - ./cms/grant-admin-policy.sql:/cms/grant-admin-policy.sql:ro
+    command:
+      ["sh", "-ec", "psql --set=ON_ERROR_STOP=1 --set=admin_email=\"$$CMS_ADMIN_EMAIL\" --file=/cms/grant-admin-policy.sql"]
+    restart: "no"
+
   publisher:
     build:
       context: .
@@ -83,8 +101,8 @@ services:
   cms-bootstrap:
     image: node:24-alpine
     depends_on:
-      directus:
-        condition: service_healthy
+      cms-admin-access:
+        condition: service_completed_successfully
     environment:
       DIRECTUS_URL: http://directus:8055
       CMS_ADMIN_EMAIL: ${CMS_ADMIN_EMAIL:?set CMS_ADMIN_EMAIL}

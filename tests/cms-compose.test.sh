@@ -8,7 +8,7 @@ require "yaml"
 base = YAML.load_file("docker-compose.yml")
 cms = YAML.load_file("docker-compose.cms.yml")
 services = cms.fetch("services")
-%w[cms-db directus publisher cms-bootstrap].each { |name| services.fetch(name) }
+%w[cms-db directus cms-admin-access publisher cms-bootstrap].each { |name| services.fetch(name) }
 %w[cms-db-data cms-uploads].each { |name| cms.fetch("volumes").fetch(name) }
 
 %w[cms-db directus].each do |name|
@@ -16,6 +16,11 @@ services = cms.fetch("services")
   abort("#{name} must not expose a host port") if service.key?("ports")
   abort("#{name} must define a health check") unless service.key?("healthcheck")
 end
+
+admin_access = services.fetch("cms-admin-access")
+abort("cms-admin-access must wait for Directus") unless admin_access.fetch("depends_on").dig("directus", "condition") == "service_healthy"
+abort("cms-admin-access must complete before cms-bootstrap") unless services.fetch("cms-bootstrap").fetch("depends_on").dig("cms-admin-access", "condition") == "service_completed_successfully"
+abort("cms-admin-access must run the policy repair SQL") unless admin_access.fetch("command").join(" ").include?("grant-admin-policy.sql")
 
 abort("firefly must expose the public port") unless base.fetch("services").fetch("firefly").key?("ports")
 '
