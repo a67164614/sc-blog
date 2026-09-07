@@ -67,23 +67,13 @@ async function login() {
 }
 
 async function ensureCollection(collection, token) {
-  let exists = false;
-  try {
-    await request(`/collections/${collection.name}`, {}, token);
-    exists = true;
-  } catch (error) {
-    if (error.status !== 404) throw error;
-  }
+  const collections = await request("/collections?fields=collection&limit=-1", {}, token);
+  const exists = collections.data.some((item) => item.collection === collection.name);
   if (!exists) await request("/collections", { method: "POST", body: JSON.stringify(collectionPayload(collection)) }, token);
 
+  const fields = await request(`/fields/${collection.name}?limit=-1`, {}, token);
   for (const field of collection.fields) {
-    let fieldExists = false;
-    try {
-      await request(`/fields/${collection.name}/${field.name}`, {}, token);
-      fieldExists = true;
-    } catch (error) {
-      if (error.status !== 404) throw error;
-    }
+    const fieldExists = fields.data.some((item) => item.field === field.name);
     if (!fieldExists) await request(`/fields/${collection.name}`, { method: "POST", body: JSON.stringify(fieldPayload(collection.name, field)) }, token);
   }
 }
@@ -91,8 +81,8 @@ async function ensureCollection(collection, token) {
 export async function bootstrap() {
   const schema = JSON.parse(await readFile(new URL("./schema.yaml", import.meta.url), "utf8"));
   const token = await login();
-  const me = await request("/users/me?fields=role.admin_access,role.app_access", {}, token);
-  console.log(`CMS bootstrap authenticated as administrator access=${Boolean(me.data?.role?.admin_access)}`);
+  const me = await request("/users/me?fields=id,role", {}, token);
+  console.log(`CMS bootstrap authenticated user=${me.data?.id ? "present" : "unknown"} role=${me.data?.role ? "assigned" : "missing"}`);
   for (const collection of schema.collections) await ensureCollection(collection, token);
 
   const settings = JSON.parse(await readFile(new URL("./seed/site-settings.json", import.meta.url), "utf8"));
