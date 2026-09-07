@@ -14,6 +14,9 @@ ENV COREPACK_NPM_REGISTRY=https://registry.npmmirror.com
 ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
 ENV DISABLE_REMOTE_FONTS=${DISABLE_REMOTE_FONTS}
 ENV DISABLE_OG_IMAGES=${DISABLE_OG_IMAGES}
+# Keep Sharp/libvips image processing within the memory budget of small servers.
+ENV VIPS_CONCURRENCY=1
+ENV UV_THREADPOOL_SIZE=1
 
 WORKDIR /app
 

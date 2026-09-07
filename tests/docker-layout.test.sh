@@ -27,6 +27,8 @@ grep -q '^ARG DISABLE_REMOTE_FONTS=1$' Dockerfile
 grep -q '^ARG DISABLE_OG_IMAGES=1$' Dockerfile
 grep -q '^ENV DISABLE_REMOTE_FONTS=\${DISABLE_REMOTE_FONTS}$' Dockerfile
 grep -q '^ENV DISABLE_OG_IMAGES=\${DISABLE_OG_IMAGES}$' Dockerfile
+grep -q '^ENV VIPS_CONCURRENCY=1$' Dockerfile
+grep -q '^ENV UV_THREADPOOL_SIZE=1$' Dockerfile
 grep -q '^RUN pnpm install --frozen-lockfile --registry=https://registry.npmmirror.com$' Dockerfile
 grep -q '^COPY --from=builder /app/dist /usr/share/nginx/html$' Dockerfile
 grep -q 'dockerfile: Dockerfile' docker-compose.yml
