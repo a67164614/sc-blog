@@ -7,6 +7,9 @@ const publisherConfigSchema = z.object({
   CONTENT_REPOSITORY: z.url(),
   GIT_AUTHOR_NAME: z.string().min(1),
   GIT_AUTHOR_EMAIL: z.email(),
+  GITHUB_TOKEN: z.string().min(1),
+  GITHUB_BRANCH: z.string().min(1).default("main"),
+  GITHUB_API_URL: z.url().default("https://api.github.com"),
   PUBLISHER_PORT: z.coerce.number().int().min(1).max(65535).default(8787),
 });
 

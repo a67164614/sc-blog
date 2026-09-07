@@ -11,6 +11,9 @@ const config = {
   CONTENT_REPOSITORY: "https://github.com/a67164614/sc-blog.git",
   GIT_AUTHOR_NAME: "Sc Blog CMS",
   GIT_AUTHOR_EMAIL: "cms@example.com",
+  GITHUB_TOKEN: "test-github-token",
+  GITHUB_BRANCH: "main",
+  GITHUB_API_URL: "https://api.github.com",
   PUBLISHER_PORT: 8787,
 };
 
