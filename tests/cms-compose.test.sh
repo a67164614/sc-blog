@@ -25,3 +25,5 @@ grep -q 'location = /admin' nginx.conf
 grep -q 'set \$directus_upstream http://directus:8055;' nginx.conf
 grep -q 'location @directus_assets' nginx.conf
 grep -q 'location / {' nginx.conf
+grep -qx 'CMS_PUBLIC_URL=https://blog.ycocc.com' .env.example
+grep -qx '.env.cms' .gitignore
