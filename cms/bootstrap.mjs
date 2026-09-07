@@ -67,17 +67,24 @@ async function login() {
 }
 
 async function ensureCollection(collection, token) {
+  let exists = false;
   try {
-    await request("/collections", { method: "POST", body: JSON.stringify(collectionPayload(collection)) }, token);
+    await request(`/collections/${collection.name}`, {}, token);
+    exists = true;
   } catch (error) {
-    if (error.status !== 400 && error.status !== 409) throw error;
+    if (error.status !== 404) throw error;
   }
+  if (!exists) await request("/collections", { method: "POST", body: JSON.stringify(collectionPayload(collection)) }, token);
+
   for (const field of collection.fields) {
+    let fieldExists = false;
     try {
-      await request(`/fields/${collection.name}`, { method: "POST", body: JSON.stringify(fieldPayload(collection.name, field)) }, token);
+      await request(`/fields/${collection.name}/${field.name}`, {}, token);
+      fieldExists = true;
     } catch (error) {
-      if (error.status !== 400 && error.status !== 409) throw error;
+      if (error.status !== 404) throw error;
     }
+    if (!fieldExists) await request(`/fields/${collection.name}`, { method: "POST", body: JSON.stringify(fieldPayload(collection.name, field)) }, token);
   }
 }
 
@@ -87,12 +94,17 @@ export async function bootstrap() {
   for (const collection of schema.collections) await ensureCollection(collection, token);
 
   const settings = JSON.parse(await readFile(new URL("./seed/site-settings.json", import.meta.url), "utf8"));
+  let settingsExist = false;
   try {
-    await request("/items/cms_site_settings", { method: "POST", body: JSON.stringify(settings) }, token);
+    await request(`/items/cms_site_settings/${settings.id}`, {}, token);
+    settingsExist = true;
   } catch (error) {
-    if (error.status !== 400 && error.status !== 409) throw error;
-    await request(`/items/cms_site_settings/${settings.id}`, { method: "PATCH", body: JSON.stringify(settings) }, token);
+    if (error.status !== 404) throw error;
   }
+  await request(`/items/cms_site_settings${settingsExist ? `/${settings.id}` : ""}`, {
+    method: settingsExist ? "PATCH" : "POST",
+    body: JSON.stringify(settings),
+  }, token);
   return schema.collections.length;
 }
 
