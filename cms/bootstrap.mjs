@@ -91,6 +91,8 @@ async function ensureCollection(collection, token) {
 export async function bootstrap() {
   const schema = JSON.parse(await readFile(new URL("./schema.yaml", import.meta.url), "utf8"));
   const token = await login();
+  const me = await request("/users/me?fields=role.admin_access,role.app_access", {}, token);
+  console.log(`CMS bootstrap authenticated as administrator access=${Boolean(me.data?.role?.admin_access)}`);
   for (const collection of schema.collections) await ensureCollection(collection, token);
 
   const settings = JSON.parse(await readFile(new URL("./seed/site-settings.json", import.meta.url), "utf8"));
@@ -111,6 +113,7 @@ export async function bootstrap() {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   bootstrap().then((count) => console.log(`CMS bootstrap applied ${count} collections`)).catch((error) => {
     console.error(error.message);
+    if (error.detail) console.error(error.detail);
     process.exit(1);
   });
 }
