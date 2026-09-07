@@ -2,8 +2,9 @@ import type { FastifyInstance } from "fastify";
 import { articlePayloadSchema } from "./article-payload.js";
 import type { ArticleStore } from "./store.js";
 import { readBearerToken, verifyToken } from "./token-auth.js";
+import type { PublicationQueue } from "../publish/queue.js";
 
-export function registerArticleRoute(app: FastifyInstance, store: ArticleStore): void {
+export function registerArticleRoute(app: FastifyInstance, store: ArticleStore, queue: PublicationQueue): void {
   app.post<{ Params: { source: string }; Body: unknown }>("/api/integrations/:source/articles", async (request, reply) => {
     const source = request.params.source;
     if (!/^[a-z0-9][a-z0-9_-]{1,63}$/.test(source)) {
@@ -33,6 +34,7 @@ export function registerArticleRoute(app: FastifyInstance, store: ArticleStore):
     try {
       const result = await store.upsertArticle(article);
       await store.recordSyncEvent({ source, externalId: parsed.data.externalId, outcome: "accepted" });
+      if (status === "published") queue.enqueue(article, new Date().toISOString());
       return reply.code(202).send({ id: result.article.id, status: result.article.status, created: result.created });
     } catch (error) {
       await store.recordSyncEvent({ source, externalId: parsed.data.externalId, outcome: "failed", errorMessage: error instanceof Error ? error.message : "unknown error" }).catch(() => undefined);

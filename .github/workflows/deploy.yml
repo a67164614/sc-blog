@@ -1,60 +1,41 @@
-name: Deploy to GitHub Pages
+name: Deploy Firefly
 
 on:
   push:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
+      - "nginx.conf"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
 
-# Pages 部署需要的权限
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# 确保只有一个部署任务同时运行
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: firefly-production
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.22.0
-          run_install: false
-          
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-      
-      - name: Build site
-        run: pnpm run build
-
-      - name: Create .nojekyll file
-        run: touch dist/.nojekyll
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist  # Astro默认构建输出目录
-
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy over SSH
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          set -eu
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SERVER_SSH_KEY" > "$HOME/.ssh/firefly_deploy_key"
+          chmod 600 "$HOME/.ssh/firefly_deploy_key"
+          ssh-keyscan -p "${SERVER_PORT:-22}" -H "$SERVER_HOST" >> "$HOME/.ssh/known_hosts"
+          ssh -i "$HOME/.ssh/firefly_deploy_key" -p "${SERVER_PORT:-22}" "$SERVER_USER@$SERVER_HOST" '
+            set -eu
+            cd /opt/firefly/sc-blog
+            git pull --ff-only origin main
+            docker compose up -d --build
+          '
